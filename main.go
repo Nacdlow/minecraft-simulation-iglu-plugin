@@ -27,6 +27,7 @@ type LightGroup struct {
 
 var (
 	registeredLightGroups []LightGroup
+	serverStarted         = false
 )
 
 func startWebServer(g *MCPlugin) {
@@ -74,23 +75,35 @@ func (g *MCPlugin) GetManifest() sdk.PluginManifest {
 	}
 }
 
-func (g *MCPlugin) RegisterDevice(reg sdk.DeviceRegistration) error {
+func (g *MCPlugin) OnDeviceToggle(id string, status bool) error {
+	for i, v := range registeredLightGroups {
+		if "mc_"+v.Id == id {
+			registeredLightGroups[i].Status = status
+			return nil
+		}
+	}
 	return nil
 }
 
-func (g *MCPlugin) OnDeviceToggle(id int, status bool) error {
-	return nil
+func (g *MCPlugin) GetDeviceStatus(id string) bool {
+	for _, v := range registeredLightGroups {
+		if "mc_"+v.Id == id {
+			return v.Status
+		}
+	}
+	return false
 }
 
 func (g *MCPlugin) GetPluginConfiguration() []sdk.PluginConfig {
 	return []sdk.PluginConfig{
-		/*		sdk.PluginConfig{
-				Title:          "Light mode",
-				Description:    "Enable light mode across the app.",
-				Key:            "light-mode",
-				Type:           sdk.BooleanValue,
-				IsUserSpecific: true,
-			},*/
+		sdk.PluginConfig{
+			Title:          "Bridge Server Port",
+			Description:    "The port the bridge web server will be hosted on.",
+			Key:            "bridge-port",
+			Default:        "25564",
+			Type:           sdk.NumberValue,
+			IsUserSpecific: false,
+		},
 	}
 }
 
