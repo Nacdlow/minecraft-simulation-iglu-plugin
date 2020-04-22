@@ -1,4 +1,4 @@
-module gitlab.com/group-nacdlow/official-plugins/minecraft-simulation-iglu-plugin
+module github.com/Nacdlow/minecraft-simulation-iglu-plugin
 
 go 1.13
 
